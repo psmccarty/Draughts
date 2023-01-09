@@ -29,7 +29,7 @@ public class Menu{
 		p2 = new JButton("2 Players");
 		p2.addActionListener(e -> {
 			frame.dispose();
-			new CheckersBoard();
+			new GameRunner(new GameLogic(new CheckersBoard()));
 		});
 		p2.setAlignmentX(Component.CENTER_ALIGNMENT);
 

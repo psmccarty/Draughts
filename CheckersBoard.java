@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.ImageIcon;
 
+import java.util.ArrayList;
+
 
 /**
  * Draws a checkers board
@@ -25,16 +27,16 @@ import javax.swing.ImageIcon;
  */
 public class CheckersBoard extends JFrame{
 
-	public Square[][] squares;
-
-	private final int ROWS = 8;
-	private final int COLS = 8;
+	private Square[][] squares;						// Contains the tiles of the game board
+	private ArrayList<Square> highlighted;					// List of currently highlighted squares
+	private static final String ICONPATH = "images/checkersIcon.png";	// Path to the icon of the app
 
 	public CheckersBoard(){
-		this.squares = new Square[ROWS][COLS];
+		this.squares = new Square[GameLogic.ROWS][GameLogic.COLS];
+		this.highlighted = new ArrayList<Square>();
 
 		this.setTitle("Checkers");
-		ImageIcon image = new ImageIcon("checkersIcon.png");
+		ImageIcon image = new ImageIcon(ICONPATH);
 		this.setIconImage(image.getImage());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(true);
@@ -46,18 +48,17 @@ public class CheckersBoard extends JFrame{
 
 		this.setMinimumSize(new Dimension(990, 990));
 
-
-		for(int i = 0; i < ROWS; i++){
-			for(int j = 0; j < COLS; j++){
-				if(i % 2 == j % 2){
-					squares[i][j] = new Square(Color.red, false, null, false, 0, i, j);
-				} else{
-					if(i <= 2){
-						squares[i][j] = new Square(Color.black, true, Color.red, false, 2, i, j);	
-					} else if(i >= 5){
-						squares[i][j] = new Square(Color.black, true, Color.black, false, 1, i, j);	
-					} else{
-						squares[i][j] = new Square(Color.black, false, null, false, 0, i, j);	
+		for(int i = 0; i < GameLogic.ROWS; i++){
+			for(int j = 0; j < GameLogic.COLS; j++){
+				if(i % 2 == j % 2){ // red squares, no pieces can enter
+					squares[i][j] = new Square(Color.red, "none", "none", i, j);
+				} else{ // black squares, pieces can reside here
+					if(i <= 2){ // squares contain pawns of player 2
+						squares[i][j] = new Square(Color.black, "pawn", "player2", i, j);	
+					} else if(i >= 5){ // squares contain pawns of player 1
+						squares[i][j] = new Square(Color.black, "pawn", "player1", i, j);	
+					} else{ // squares are initially empty
+						squares[i][j] = new Square(Color.black, "none", "none", i, j);	
 					}
 				}
 				squares[i][j].setPreferredSize(new Dimension(90, 90));
@@ -72,16 +73,23 @@ public class CheckersBoard extends JFrame{
 	}
 
 	/**
-	 * Return a Square object at a specified row and column
+	 * Get all squares that are in this board
 	 *
-	 * @param i row of desired Square
-	 * @param j col of desired Square
-	 * @return the desired Square
+	 * @return squares of this board
 	 */
-	public Square getSquare(int i, int j){
-		return this.squares[i][j];	
+	public Square[][] getSquares(){
+		return this.squares;	
 	}
 
-	
+	/**
+	 * Get squares that are currently highlighted on this board
+	 *
+	 * @return squares currently highlighted on this board
+	 */
+	public ArrayList<Square> getHighlighted(){
+		return this.highlighted;	
+	}
+
+		
 
 }
