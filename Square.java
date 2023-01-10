@@ -114,6 +114,7 @@ public class Square extends JLabel implements MouseListener{
 	public void removePiece(){
 		this.piece = "none";
 		this.setIcon(null);
+		this.player = "none";
 	}
 
 	/**
@@ -131,6 +132,16 @@ public class Square extends JLabel implements MouseListener{
 		} else if(player.equals("player2") && piece.equals("queen")){	
 			this.setIcon(new ImageIcon(LAVQUEENIMGPATH));
 		}
+	}
+
+
+	public void promoteToQueen(){
+		this.piece = "queen";
+		if(this.player.equals("player1")){
+			this.setIcon(new ImageIcon(REDQUEENIMGPATH));	
+		} else{
+			this.setIcon(new ImageIcon(LAVQUEENIMGPATH));	
+		}	
 	}
 
 

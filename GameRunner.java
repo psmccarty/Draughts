@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GameRunner{
@@ -16,9 +17,14 @@ public class GameRunner{
 	 */
 	public static void processMousePressed(Square tile){
 
-		if(gl.previouslyClicked != null && gl.getAvailableMoves(gl.previouslyClicked).contains(tile)){
+		if(gl.movesList != null && gl.movesList.containsKey(tile)){
 			//TODO: change this to also eliminate jumped pieces
-			gl.simpleMove(gl.previouslyClicked, tile);	
+			gl.simpleMove(gl.previouslyClicked, tile);
+			ArrayList<Square> kills = gl.movesList.get(tile);
+			for(int i = 0; i < kills.size(); i++){
+				kills.get(i).removePiece();	
+			}
+			gl.checkAndPromoteToQueen(tile);
 		}
 
 
@@ -27,13 +33,15 @@ public class GameRunner{
 
 		gl.clearHighlighted();
 		ArrayList<Square> moves = new ArrayList<Square>();
+		HashMap<Square, ArrayList<Square>> ml = new HashMap<Square, ArrayList<Square>>();
 		if(gl.currPlayer == 1 && tile.getPlayer().equals("player1")){
-			moves = gl.getRedPawnMoves(tile);	
+			ml = gl.getRedPawnMoves(tile);	
 		} else if(gl.currPlayer == 2 && tile.getPlayer().equals("player2")){
-			moves = gl.getLavPawnMoves(tile);	
+			ml = gl.getLavPawnMoves(tile);	
 		}
-		for(int i = 0; i < moves.size(); i++){
-			gl.highlight(moves.get(i));
+		Square[] sqs = ml.keySet().toArray(new Square[0]);
+		for(int i = 0; i < sqs.length; i++){
+			gl.highlight(sqs[i]);
 		}
 
 
@@ -41,5 +49,6 @@ public class GameRunner{
 
 
 		gl.previouslyClicked = tile;
+		gl.movesList = ml;
 	}
 }
