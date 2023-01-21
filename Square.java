@@ -22,11 +22,11 @@ public class Square extends JLabel implements MouseListener{
 	private int row;
 	private int col;
 
-	private static final Color BORDERCOLOR = new Color(0xffd700); // border color for all squares
-	private static final String REDPAWNIMGPATH = "images/rp.png";
-	private static final String LAVPAWNIMGPATH = "images/lp.png";
-	private static final String LAVQUEENIMGPATH = "images/lq.png";
-	private static final String REDQUEENIMGPATH = "images/rq.png";
+	private static final Color BORDERCOLOR = new Color(0xffd700); 			// border color for all squares
+	private static final String REDPAWNIMGPATH = "images/redPawn.png"; 		// Path to the image of the red pawn
+	private static final String LAVPAWNIMGPATH = "images/lavanderPawn.png";		// Path to the image of the lav pawn
+	private static final String LAVQUEENIMGPATH = "images/lavanderQueen.png";	// Path to the image of the lav queen 
+	private static final String REDQUEENIMGPATH = "images/redQueen.png";		// Path to the image of the red queen
 	
 	
 	/**
@@ -65,8 +65,8 @@ public class Square extends JLabel implements MouseListener{
 		} else if(piece.equals("queen") && player.equals("player2")){
 			this.setIcon(new ImageIcon(LAVQUEENIMGPATH));	
 		}
-
 	}
+
 
 	/**
 	 * Get the color of the tile
@@ -77,6 +77,7 @@ public class Square extends JLabel implements MouseListener{
 		return this.tileCol;	
 	}
 
+
 	/**
 	 * Get the piece on this tile if one exists
 	 *
@@ -86,6 +87,7 @@ public class Square extends JLabel implements MouseListener{
 		return this.piece;	
 	}
 
+
 	/**
 	 * Get the player who owns the piece on this tile if one exists 
 	 *
@@ -94,6 +96,7 @@ public class Square extends JLabel implements MouseListener{
 	public String getPlayer(){
 		return this.player;	
 	}
+
 
 	/**
 	 * Get the coordinates of this piece on the checkers board
@@ -117,6 +120,7 @@ public class Square extends JLabel implements MouseListener{
 		this.player = "none";
 	}
 
+
 	/**
 	 * Place piece on this tile
 	 */
@@ -135,6 +139,9 @@ public class Square extends JLabel implements MouseListener{
 	}
 
 
+	/**
+	 * Promote this piece to a queen
+	 */
 	public void promoteToQueen(){
 		this.piece = "queen";
 		if(this.player.equals("player1")){
@@ -144,7 +151,13 @@ public class Square extends JLabel implements MouseListener{
 		}	
 	}
 
-
+	
+	/**
+	 * Display the coordinates of this Square
+	 */
+	public String toString(){
+		return "(" + this.row + ", " + this.col + ")";	
+	}
 
 	public void mouseClicked(MouseEvent e){}
 

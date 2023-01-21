@@ -2,60 +2,52 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Color;
 
 
-/**
- * Main menu for the application. Gives the player options on the mode
- */
-public class Menu{
+public class Menu extends JFrame{
 
-	private JFrame frame;
-	private JButton p1;
-	private JButton p2;
-	private JLabel title;
+	private JButton playButton;
 	private String ICONPATH = "images/checkersIcon.png";
+	private String LOGO = "images/menuLogo.png";
 
 	public Menu(){
-		frame = new JFrame();
 
-		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		ImageIcon image = new ImageIcon(ICONPATH);
-		frame.setIconImage(image.getImage());
+		this.setIconImage(image.getImage());
+		this.setLayout(null);
+		this.setTitle("Draughts");
+		this.setResizable(false);
+		this.getContentPane().setBackground(Color.red);
 
-		p1 = new JButton("1 Player");
-		p1.setAlignmentX(Component.CENTER_ALIGNMENT);
-		p1.setFocusable(false);
+		JLabel label = new JLabel();
+		label.setBounds(105, 0, 1340, 312);
+		ImageIcon logo = new ImageIcon(LOGO);
+		label.setIcon(logo);
 
-		p2 = new JButton("2 Players");
-		p2.addActionListener(e -> {
-			frame.dispose();
+
+		this.playButton = new JButton("Play");
+		playButton.setBounds(700, 512, 150, 50);
+		playButton.setFont(new Font("Public Pixel", Font.PLAIN, 20));
+		playButton.setBackground(new Color(0xD62E21));
+		playButton.setForeground(Color.black);
+		playButton.setBorder(BorderFactory.createEtchedBorder());
+		playButton.addActionListener(e -> {
+			this.dispose();
 			new GameRunner(new GameLogic(new CheckersBoard()));
 		});
-		p2.setAlignmentX(Component.CENTER_ALIGNMENT);
-		p2.setFocusable(false);
+		playButton.setFocusable(false);
 
-		title = new JLabel("Game Modes");
-		title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("haha");
-		frame.setSize(420, 420);
-
-		frame.add(title);
-		frame.add(p1);
-		frame.add(p2);
-
-		frame.setVisible(true);
-
-
-
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setVisible(true);
+		this.add(label);
+		this.add(playButton);
+		System.out.println(this.getSize());
 	}
-
-
-
 }

@@ -6,7 +6,7 @@ public class GameLogic{
 
 	private static CheckersBoard cb;	// Checkers board of this game session
 	public Square previouslyClicked = null;	// The Square that was previously clicked
-	public HashMap<Square, ArrayList<Square>> movesList = null;
+	public HashMap<Square, ArrayList<Square>> movesList = null; 
 	public int currPlayer;			// The player whose turn it is. 1 for player1 and 2 for player2
 	
 	public static final int ROWS = 8;	// Total number of rows on this board
@@ -66,6 +66,7 @@ public class GameLogic{
 	 */
 	public void simpleMove(Square curr, Square dest){
 
+		replacePlayerPiece(curr, dest);	
 		dest.placePiece(curr.getPiece(), curr.getPlayer());
 		curr.removePiece();	
 		this.currPlayer = this.currPlayer == 1 ? 2 : 1; // change player
@@ -135,7 +136,9 @@ public class GameLogic{
 	 * @param a HashMap where keys are final destination for moves and values are all
 	 * 	  the kills genereated by that move
 	 */
-	public HashMap<Square, ArrayList<Square>> getRedPawnMoves(Square tile){
+	public static HashMap<Square, ArrayList<Square>> getRedPawnMoves(Square tile){
+
+		//TODO: broken. Will return the key with squares that it shouldnt
 
 		HashMap<Square, ArrayList<Square>> map = new HashMap<Square, ArrayList<Square>>();
 
@@ -165,25 +168,35 @@ public class GameLogic{
 			if(curr.getPiece().equals("none")){ // square is empty. valid move
 				ArrayList<Square> neoKill = new ArrayList<Square>(); // make deep copy
 				neoKill.addAll(kill);
-				map.put(curr, neoKill);
+				map.putIfAbsent(curr, neoKill);
 				if(jumped){ // reached this square by jumping over an enemy
 					if(getUpperLeft(curr) != null && !getUpperLeft(curr).getPiece().equals("none")){
 						queue.add(getUpperLeft(curr));
 						origins.add('L');
 						enemyJumped.add(false);
-						kills.add(kill);
+
+						ArrayList<Square> deepCopyLeft = new ArrayList<Square>(); // make deep copy
+						deepCopyLeft.addAll(neoKill);
+						kills.add(deepCopyLeft); //probably have to change this to neoKill
 					}
 					
 					if(getUpperRight(curr) != null && !getUpperRight(curr).getPiece().equals("none")){
 						queue.add(getUpperRight(curr));
 						origins.add('R');
 						enemyJumped.add(false);
-						kills.add(kill);
+
+						ArrayList<Square> deepCopyRight = new ArrayList<Square>(); // make deep copy
+						deepCopyRight.addAll(neoKill);
+						kills.add(deepCopyRight); //probably have to change this to neoKill
 					}
 				}
 			} else if(!curr.getPlayer().equals(tile.getPlayer()) && !jumped){ // square has enemy. could potentially kill enemy // change
-				kill.add(curr);
-				kills.add(kill);
+
+				ArrayList<Square> neoKill = new ArrayList<Square>(); // make deep copy
+				neoKill.addAll(kill);
+				neoKill.add(curr);
+				kills.add(neoKill);
+
 				if(origin == 'L'){
 					queue.add(getUpperLeft(curr));
 					origins.add('L');	
@@ -206,7 +219,7 @@ public class GameLogic{
 	 * @param a HashMap where keys are final destination for moves and values are all
 	 * 	  the kills genereated by that move
 	 */
-	public HashMap<Square, ArrayList<Square>> getLavPawnMoves(Square tile){
+	public static HashMap<Square, ArrayList<Square>> getLavPawnMoves(Square tile){
 
 		HashMap<Square, ArrayList<Square>> map = new HashMap<Square, ArrayList<Square>>();
 
@@ -236,25 +249,35 @@ public class GameLogic{
 			if(curr.getPiece().equals("none")){ // square is empty. valid move
 				ArrayList<Square> neoKill = new ArrayList<Square>();
 				neoKill.addAll(kill);
-				map.put(curr, neoKill);
+				map.putIfAbsent(curr, neoKill);
 				if(jumped){ // reached this square by jumping over an enemy
 					if(getLowerLeft(curr) != null && !getLowerLeft(curr).getPiece().equals("none")){
 						queue.add(getLowerLeft(curr));
 						origins.add('L');
 						enemyJumped.add(false);
-						kills.add(kill);
+
+						ArrayList<Square> deepCopyLeft = new ArrayList<Square>(); // make deep copy
+						deepCopyLeft.addAll(neoKill);
+						kills.add(deepCopyLeft); //probably have to change this to neoKill
 					}
 					
 					if(getLowerRight(curr) != null && !getLowerRight(curr).getPiece().equals("none")){
 						queue.add(getLowerRight(curr));
 						origins.add('R');
 						enemyJumped.add(false);
-						kills.add(kill);
+
+						ArrayList<Square> deepCopyRight = new ArrayList<Square>(); // make deep copy
+						deepCopyRight.addAll(neoKill);
+						kills.add(deepCopyRight); //probably have to change this to neoKill
 					}
 				}
 			} else if(!curr.getPlayer().equals(tile.getPlayer()) && !jumped){ // square has enemy. could potentially kill enemy // change
-				kill.add(curr);
-				kills.add(kill);
+
+				ArrayList<Square> neoKill = new ArrayList<Square>(); // make deep copy
+				neoKill.addAll(kill);
+				neoKill.add(curr);
+				kills.add(neoKill);
+
 				if(origin == 'L'){
 					queue.add(getLowerLeft(curr));
 					origins.add('L');	
@@ -304,11 +327,11 @@ public class GameLogic{
 	 * @param m2 move map where where entries will be moved into
 	 * @return a hashmap with thr merged contents of the two arguments	
 	 */
-	public HashMap<Square, ArrayList<Square>> mergeTwoMoveMaps(HashMap<Square, ArrayList<Square>> m1, HashMap<Square, ArrayList<Square>> m2){
+	public static HashMap<Square, ArrayList<Square>> mergeTwoMoveMaps(HashMap<Square, ArrayList<Square>> m1, HashMap<Square, ArrayList<Square>> m2){
 
-		Square[] keys = m2.keySet().toArray(new Square[0]); // this might throw some kind of null pointer exception
-		for(int i = 0; i < keys.length; i++){
-			m2.putIfAbsent(keys[i], m1.get(keys[i]));	
+		Square[] keys1 = m1.keySet().toArray(new Square[0]); // this might throw some kind of null pointer exception
+		for(int i = 0; i < keys1.length; i++){
+			m2.putIfAbsent(keys1[i], m1.get(keys1[i]));	
 		}	
 		return m2;	
 	}
@@ -322,13 +345,83 @@ public class GameLogic{
 	 * @param a HashMap where keys are final destination for moves and values are all
 	 * 	  the kills genereated by that move
 	 */
-	public HashMap<Square, ArrayList<Square>> getRedQueenMoves(Square tile){
-		HashMap<Square, ArrayList<Square>> map1 = new HashMap<>();
-		HashMap<Square, ArrayList<Square>> map2 = new HashMap<>();
-		return null;
+	public static HashMap<Square, ArrayList<Square>> getQueenMoves(Square tile){
+		HashMap<Square, ArrayList<Square>> map1 = getRedPawnMoves(tile);
+		HashMap<Square, ArrayList<Square>> map2 = getLavPawnMoves(tile);
+		HashMap<Square, ArrayList<Square>> mergedMap = mergeTwoMoveMaps(map1, map2);
+		return mergedMap;
 
 		
 	}
 
+
+	/**
+	 * Determine whether a gives player still has any available moves
+	 *
+	 * @param pieces ArrayList containing the squares controled by the given player
+	 * @return true if the player still has available moves. false otherwise.
+	 */
+	public static boolean playerHasMoves(String p){
+		ArrayList<Square> pieces = cb.getPlayerPieces(p);
+		if(pieces == null || pieces.size() == 0){ // player has no pieces remaining
+			return false;	
+		}
+		
+		for(int i = 0; i < pieces.size(); i++){
+			Square tile = pieces.get(i);
+			HashMap<Square, ArrayList<Square>> map = null;
+			if(tile.getPiece().equals("pawn")){
+				if(tile.getPlayer().equals("player1")){ // red pawn
+					map = getRedPawnMoves(tile);	
+				} else{ // lavander pawn
+					map = getLavPawnMoves(tile);	
+				}	
+			} else if(tile.getPiece().equals("queen")){
+				map = getQueenMoves(tile);	
+			} else{
+				System.out.println("Problem in playerHasMoves()");
+			}
+			if(map != null && map.size() > 0){
+				return true;	
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * Remove a given piece from the board and from the list of player pieces
+	 *
+	 * @param tile The square where the piece must be removed from
+	 */
+	public static void eliminate(Square tile){
+		ArrayList<Square> l1 = cb.getPlayerPieces(tile.getPlayer());
+		System.out.println(l1.toString());
+		l1.remove(tile);
+		System.out.println(l1.toString());
+		tile.removePiece();
+	}
+
+
+	/**
+	 * A piece has moved from one square to another. Remove the old square from the list
+	 * of player pieces and add the new square
+	 *
+	 * @param former Square that currently has the piece that has moved
+	 * @param latter Square that the piece will be moved to
+	 */
+	public static void replacePlayerPiece(Square former, Square latter){
+		ArrayList<Square> piec = cb.getPlayerPieces(former.getPlayer()); 
+		piec.remove(former);
+		piec.add(latter);
+	}	
+
+
+	/**
+	 * Display a message to the screen that a player has won
+	 */
+	public static void displayWin(String message){
+		cb.interruptMessage(message);
+	}
 
 }
