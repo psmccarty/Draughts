@@ -19,12 +19,5 @@ GameLogic.class: GameLogic.java CheckersBoard.class
 GameRunner.class: GameRunner.java GameLogic.class
 	javac GameRunner.java
 
-printall:
-	Get-Content Main.java 
-
-runTest:
-	javac Test.java
-	java Test
-
 clean:
 	del *~ *.class
